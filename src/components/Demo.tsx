@@ -17,24 +17,18 @@ import {
   useSwitchChain,
   useChainId,
 } from "wagmi";
-import {
-  useConnection as useSolanaConnection,
-  useWallet as useSolanaWallet,
-} from '@solana/wallet-adapter-react';
-import { useHasSolanaProvider } from "./providers/SafeFarcasterSolanaProvider";
-import { ShareButton } from "./ui/Share";
 
-import { config } from "~/components/providers/WagmiProvider";
-import { Button } from "~/components/ui/Button";
-import { truncateAddress } from "~/lib/truncateAddress";
+import { useHasSolanaProvider } from "./providers/SafeFarcasterSolanaProvider";
+// import { ShareButton } from "./ui/Share";
+
+import { truncateAddress } from "../lib/truncateAddress";
 import { base, degen, mainnet, optimism, unichain } from "wagmi/chains";
 import { BaseError, UserRejectedRequestError } from "viem";
 import { useSession } from "next-auth/react";
 import { useMiniApp } from "@neynar/react";
-import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-import { Header } from "~/components/ui/Header";
-import { Footer } from "~/components/ui/Footer";
-import { USE_WALLET, APP_NAME } from "~/lib/constants";
+// import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+
+import { APP_NAME, USE_WALLET } from "../lib/constants";
 
 export type Tab = 'home' | 'actions' | 'context' | 'wallet';
 
@@ -62,9 +56,9 @@ export default function Demo(
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
-  const hasSolanaProvider = useHasSolanaProvider();
-  const solanaWallet = useSolanaWallet();
-  const { publicKey: solanaPublicKey } = solanaWallet;
+// const hasSolanaProvider = useHasSolanaProvider();
+// const solanaWallet = useSolanaWallet();
+//  const { publicKey: solanaPublicKey } = solanaWallet;
 
   useEffect(() => {
     console.log("isSDKLoaded", isSDKLoaded);
@@ -222,7 +216,7 @@ export default function Demo(
       }}
     >
       <div className="mx-auto py-2 px-4 pb-20">
-        <Header neynarUser={neynarUser} />
+        {/* <Header neynarUser={neynarUser} /> */}
 
         <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
 
@@ -237,7 +231,7 @@ export default function Demo(
 
         {activeTab === 'actions' && (
           <div className="space-y-3 px-6 w-full max-w-md mx-auto">
-            <ShareButton 
+            {/* <ShareButton 
               buttonText="Share Mini App"
               cast={{
                 text: "Check out this awesome frame @1 @2 @3! 🚀🪐",
@@ -245,28 +239,28 @@ export default function Demo(
                 embeds: [`${process.env.NEXT_PUBLIC_URL}/share/${context?.user?.fid || ''}`]
               }}
               className="w-full"
-            />
+            /> */}
 
             <SignIn />
 
-            <Button onClick={() => actions.openUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ")} className="w-full">Open Link</Button>
+            <button onClick={() => actions.openUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ")} className="w-full px-4 py-2 bg-blue-500 text-white rounded">Open Link</button>
 
-            <Button onClick={actions.close} className="w-full">Close Mini App</Button>
+            <button onClick={actions.close} className="w-full px-4 py-2 bg-blue-500 text-white rounded">Close Mini App</button>
 
-            <Button onClick={actions.addMiniApp} disabled={added} className="w-full">
+            <button onClick={actions.addMiniApp} disabled={added} className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50">
               Add Mini App to Client
-            </Button>
+            </button>
 
             {sendNotificationResult && (
               <div className="text-sm w-full">
                 Send notification result: {sendNotificationResult}
               </div>
             )}
-            <Button onClick={sendNotification} disabled={!notificationDetails} className="w-full">
+            <button onClick={sendNotification} disabled={!notificationDetails} className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50">
               Send notification
-            </Button>
+            </button>
 
-            <Button 
+            <button 
               onClick={async () => {
                 if (context?.user?.fid) {
                   const shareUrl = `${process.env.NEXT_PUBLIC_URL}/share/${context.user.fid}`;
@@ -276,10 +270,10 @@ export default function Demo(
                 }
               }}
               disabled={!context?.user?.fid}
-              className="w-full"
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
             >
               {copied ? "Copied!" : "Copy share URL"}
-            </Button>
+            </button>
           </div>
         )}
 
@@ -298,7 +292,7 @@ export default function Demo(
           <div className="space-y-3 px-6 w-full max-w-md mx-auto">
             {address && (
               <div className="text-xs w-full">
-                Address: <pre className="inline w-full">{truncateAddress(address)}</pre>
+                Address: <pre className="inline w-full">{address}</pre>
               </div>
             )}
 
@@ -308,34 +302,35 @@ export default function Demo(
               </div>
             )}
 
-            {isConnected ? (
-              <Button
+            {/* Commented out wallet functionality since USE_WALLET is false */}
+            {/* {isConnected ? (
+              <button
                 onClick={() => disconnect()}
-                className="w-full"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded"
               >
                 Disconnect
-              </Button>
+              </button>
             ) : context ? (
-              <Button
+              <button
                 onClick={() => connect({ connector: connectors[0] })}
-                className="w-full"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded"
               >
                 Connect
-              </Button>
+              </button>
             ) : (
               <div className="space-y-3 w-full">
-                <Button
+                <button
                   onClick={() => connect({ connector: connectors[1] })}
-                  className="w-full"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded"
                 >
                   Connect Coinbase Wallet
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={() => connect({ connector: connectors[2] })}
-                  className="w-full"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded"
                 >
                   Connect MetaMask
-                </Button>
+                </button>
               </div>
             )}
 
@@ -344,14 +339,13 @@ export default function Demo(
             {isConnected && (
               <>
                 <SendEth />
-                <Button
+                <button
                   onClick={sendTx}
                   disabled={!isConnected || isSendTxPending}
-                  isLoading={isSendTxPending}
-                  className="w-full"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
                 >
                   Send Transaction (contract)
-                </Button>
+                </button>
                 {isSendTxError && renderError(sendTxError)}
                 {txHash && (
                   <div className="text-xs w-full">
@@ -366,37 +360,53 @@ export default function Demo(
                     </div>
                   </div>
                 )}
-                <Button
+                <button
                   onClick={signTyped}
                   disabled={!isConnected || isSignTypedPending}
-                  isLoading={isSignTypedPending}
-                  className="w-full"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
                 >
                   Sign Typed Data
-                </Button>
+                </button>
                 {isSignTypedError && renderError(signTypedError)}
-                <Button
+                <button
                   onClick={handleSwitchChain}
                   disabled={isSwitchChainPending}
-                  isLoading={isSwitchChainPending}
-                  className="w-full"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
                 >
                   Switch to {nextChain.name}
-                </Button>
+                </button>
                 {isSwitchChainError && renderError(switchChainError)}
               </>
-            )}
+            )} */}
           </div>
         )}
 
-        <Footer activeTab={activeTab} setActiveTab={setActiveTab} showWallet={USE_WALLET} />
+        {/* <Footer activeTab={activeTab} setActiveTab={setActiveTab} showWallet={USE_WALLET} /> */}
+        
+        {/* Temporary simple navigation */}
+        <div className="fixed bottom-0 left-0 right-0 flex justify-around p-4 bg-white border-t">
+          <button onClick={() => setActiveTab('home')} className={`px-4 py-2 ${activeTab === 'home' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
+            🏠 Home
+          </button>
+          <button onClick={() => setActiveTab('actions')} className={`px-4 py-2 ${activeTab === 'actions' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
+            ⚡ Actions
+          </button>
+          <button onClick={() => setActiveTab('context')} className={`px-4 py-2 ${activeTab === 'context' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
+            📋 Context
+          </button>
+          {USE_WALLET && (
+            <button onClick={() => setActiveTab('wallet')} className={`px-4 py-2 ${activeTab === 'wallet' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
+              💰 Wallet
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-// Solana functions inspired by farcaster demo
-// https://github.com/farcasterxyz/frames-v2-demo/blob/main/src/components/Demo.tsx
+// Commented out Solana functions since we're not using them
+/*
 function SignSolanaMessage({ signMessage }: { signMessage?: (message: Uint8Array) => Promise<Uint8Array> }) {
   const [signature, setSignature] = useState<string | undefined>();
   const [signError, setSignError] = useState<Error | undefined>();
@@ -424,14 +434,13 @@ function SignSolanaMessage({ signMessage }: { signMessage?: (message: Uint8Array
 
   return (
     <>
-      <Button
+      <button
         onClick={handleSignMessage}
         disabled={signPending}
-        isLoading={signPending}
-        className="mb-4"
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
       >
-        Sign Message
-      </Button>
+        {signPending ? 'Loading...' : 'Sign Message'}
+      </button>
       {signError && renderError(signError)}
       {signature && (
         <div className="mt-2 text-xs">
@@ -453,8 +462,6 @@ function SendSolana() {
   const { connection: solanaConnection } = useSolanaConnection();
   const { sendTransaction, publicKey } = useSolanaWallet();
 
-  // This should be replaced but including it from the original demo
-  // https://github.com/farcasterxyz/frames-v2-demo/blob/main/src/components/Demo.tsx#L718
   const ashoatsPhantomSolanaWallet = 'Ao3gLNZAsbrmnusWVqQCPMrcqNi6jdYgu8T6NCoXXQu1';
 
   const handleSend = useCallback(async () => {
@@ -484,7 +491,6 @@ function SendSolana() {
 
       const simulation = await solanaConnection.simulateTransaction(transaction);
       if (simulation.value.err) {
-        // Gather logs and error details for debugging
         const logs = simulation.value.logs?.join('\n') ?? 'No logs';
         const errDetail = JSON.stringify(simulation.value.err);
         throw new Error(`Simulation failed: ${errDetail}\nLogs:\n${logs}`);
@@ -502,14 +508,13 @@ function SendSolana() {
 
   return (
     <>
-      <Button
+      <button
         onClick={handleSend}
         disabled={state.status === 'pending'}
-        isLoading={state.status === 'pending'}
-        className="mb-4"
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
       >
-        Send Transaction (sol)
-      </Button>
+        {state.status === 'pending' ? 'Loading...' : 'Send Transaction (sol)'}
+      </button>
       {state.status === 'error' && renderError(state.error)}
       {state.status === 'success' && (
         <div className="mt-2 text-xs">
@@ -519,7 +524,10 @@ function SendSolana() {
     </>
   );
 }
+*/
 
+// Commented out EVM functions since we're not using wallet functionality
+/*
 function SignEvmMessage() {
   const { isConnected } = useAccount();
   const { connectAsync } = useConnect();
@@ -544,13 +552,13 @@ function SignEvmMessage() {
 
   return (
     <>
-      <Button
+      <button
         onClick={handleSignMessage}
         disabled={isSignPending}
-        isLoading={isSignPending}
+        className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
       >
-        Sign Message
-      </Button>
+        {isSignPending ? 'Loading...' : 'Sign Message'}
+      </button>
       {isSignError && renderError(signError)}
       {signature && (
         <div className="mt-2 text-xs">
@@ -577,7 +585,6 @@ function SendEth() {
     });
 
   const toAddr = useMemo(() => {
-    // Protocol guild address
     return chainId === base.id
       ? "0x32e3C7fD24e175701A35c224f2238d18439C7dBC"
       : "0xB3d8d7887693a9852734b4D25e9C0Bb35Ba8a830";
@@ -592,13 +599,13 @@ function SendEth() {
 
   return (
     <>
-      <Button
+      <button
         onClick={handleSend}
         disabled={!isConnected || isSendTxPending}
-        isLoading={isSendTxPending}
+        className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
       >
-        Send Transaction (eth)
-      </Button>
+        {isSendTxPending ? 'Loading...' : 'Send Transaction (eth)'}
+      </button>
       {isSendTxError && renderError(sendTxError)}
       {data && (
         <div className="mt-2 text-xs">
@@ -616,6 +623,7 @@ function SendEth() {
     </>
   );
 }
+*/
 
 function SignIn() {
   const [signingIn, setSigningIn] = useState(false);
@@ -668,14 +676,14 @@ function SignIn() {
   return (
     <>
       {status !== "authenticated" && (
-        <Button onClick={handleSignIn} disabled={signingIn}>
+        <button onClick={handleSignIn} disabled={signingIn} className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50">
           Sign In with Farcaster
-        </Button>
+        </button>
       )}
       {status === "authenticated" && (
-        <Button onClick={handleSignOut} disabled={signingOut}>
+        <button onClick={handleSignOut} disabled={signingOut} className="w-full px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50">
           Sign out
-        </Button>
+        </button>
       )}
       {session && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
@@ -717,4 +725,3 @@ const renderError = (error: Error | null) => {
 
   return <div className="text-red-500 text-xs mt-1">{error.message}</div>;
 };
-
