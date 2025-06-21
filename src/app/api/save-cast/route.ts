@@ -70,11 +70,14 @@ async function fetchCastFromNeynar(castHash: string) {
     throw new Error('NEYNAR_API_KEY not configured');
   }
 
+  console.log('Using API key:', apiKey.substring(0, 8) + '...');
+  console.log('Fetching cast:', castHash);
+
   const response = await fetch(
     `https://api.neynar.com/v2/farcaster/cast?identifier=${castHash}&type=hash`,
     {
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'api_key': apiKey,
         'Content-Type': 'application/json',
       },
     }
